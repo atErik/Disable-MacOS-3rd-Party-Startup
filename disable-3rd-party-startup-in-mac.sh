@@ -33,8 +33,9 @@ DBMyLL="${DBK}/My$LbLn";
 			# if the Src directory (selected in this loop) exists, then we begin to process items inside it:
 			if [ -d "$sD" ] ; then {
 				dsblCountr=0;
-				# Looping thru each PLIST files that are inside the Dir/Folder selected in this loop:
-				for f in "${sD}*.plist*" ; do { 
+				# Looping thru real PLIST files and symlink PLIST files that are inside the Dir/Folder selected in this loop:
+				find "$sD" -not -type d -print0 | while IFS= read -r -d $'\0' plf ; do {
+					# for f in "${sD}*.plist*" ; do { 
 					# if selected plist file does-not exists then continuing to next loop:
 					#   (to overcome error of "For" loop, as it uses given code once, When no plist/match found)
 					[ -e "${sD}$f" ] || continue;
@@ -67,8 +68,14 @@ DBMyLL="${DBK}/My$LbLn";
 								fi;
 							};
 							fi;	# End of if [ "$dsblCountr" -gt 1 ] ;
+							
 							# disabling the STRATUP/plist/item, (before moving):
-							sudo /bin/launchctl unload -w "${sD}$f" ;
+							sudo /bin/launchctl unload "${sD}$f" ;
+							# sudo /bin/launchctl stop <label>
+							# sudo /bin/launchctl load -w "${sD}$f" ;
+							# sudo /bin/launchctl start <label> ;
+							# sudo launchctl kickstart -k <label>
+							
 							# again checking if it has disabled or not:
 							enbl=`sudo /usr/libexec/PlistBuddy -c 'print RunAtLoad' "${sD}$f"`;
 							# if launchctl could not disable it, then we will use PlistBuddy to manually disable it:
@@ -87,7 +94,9 @@ DBMyLL="${DBK}/My$LbLn";
 					};
 					fi;
 				};
-				done;	# End of for f in "${sD}*.plist*" ;
+				# done;	# End of for f in "${sD}*.plist*" ;
+				done;	# while IFS= read -r -d $'\0' f ;
+				
 				unset dsblCountr;
 			};
 			fi;	# End of if [ -d "$sD" ] ;
