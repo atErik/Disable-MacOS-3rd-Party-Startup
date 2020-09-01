@@ -1,15 +1,27 @@
 # Disable-MacOS-3rd-Party-Startup
-disable 3rd-party (and other) startup PLIST items in macOS, to assist in troubleshooting. Bash/Zsh script.  
+Disable (untrusted or allmost all) 3rd-party and other (risky 2nd-party, etc) AUTO STARTUP (PLIST, services, applications, etc) items in macOS, to assist in troubleshooting. By using Bash/Zsh, etc script(s), tools.  
 <br />
 
 <br /><br />
-disable-3rd-party-startup-in-mac.sh  
+USAGE:  
+  
+DOWNLOAD `"disable-3rd-party-startup-in-mac.sh"` script file (via github "raw" mode) in your Mac/computer's "Desktop" or "Downloads" folder,  
+Or, Copy-Paste code into a script file.  
+<br />
+Make the script file EXECUTABLE:  
+run either this cmd: `chmod +x ~/Desktop/disable-3rd-party-startup-in-mac.sh`  
+(or this cmd: `chmod +x ~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
+<br />
+RUN it:  
+run it from "Terminal": `~/Desktop/disable-3rd-party-startup-in-mac.sh`  
+&#160;&#160;(or: `~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
+or, double-click on the `"disable-3rd-party-startup-in-mac.sh"` file, in Mac "Finder".  
 <br />
 
 
 <br /><br />
 <a name="License"></a><a name="Copyright"></a>
-<div width="100%"><b>Server-Admin-Scripts:</b><br />
+<div width="100%"><b>Disable-MacOS-3rd-Party-Startup:</b><br />
  All Script(s)/Tool(s), Config(s)/Settings, etc For “Disable-MacOS-3rd-Party-Startup” (this project)
  are <b>Released with following COMBINED LICENSE + RESTRICTIONs + PERMISSIONs</b>,
  (unless a different License is specifically mentioned)<b>:</b><dl>
