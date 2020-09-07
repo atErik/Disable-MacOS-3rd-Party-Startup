@@ -8,8 +8,9 @@ dv=`$dt`;
 LL="Library/Launch";
 LbLn="LibraryLaunch";
 DBK="Desktop/Backup";
-DBMcLL="${DBK}/Mac$LbLn";
-DBMyLL="${DBK}/My$LbLn";
+# DBMcLL="${DBK}/Mac$LbLn";
+# DBMyLL="${DBK}/My$LbLn";
+sS="Disable-3rd-Party-Services:";
 
 # Creating the "~/Desktop/Backup/" folder structure, when it does not exists:
 [ -d "~/${DBK}" ] || mkdir -p "~/${DBK}";
@@ -18,8 +19,65 @@ DBMyLL="${DBK}/My$LbLn";
 #  into "~/Desktop/Backup/" folder, (before we do steps inside below script-codes):
 /bin/launchctl list > "~/${DBK}/${dv}_launchctl-list_begin.txt";
 	
-	# We are using 5 pairs of Source-&-Destination Directories, to loop/iterate same functions for each directory:
-	for L in 1 2 3 4 5 ; do { 
+	
+	# 1ST-STAGE : Using "launchctl" to disable 3rd-Party Auto Startup Items.
+	
+	while IFS= read -a Ln ; do {
+		# We are removing all TAB-chars & whatever before TAB-chars,
+		# to get last words after 2nd-TAB, as that is the "Label":
+		LNm="${Ln//*$'\x09'/}";
+		# If a label is not-starting with "com.apple.", then that is 3rd-Party PLIST,
+		# so we will process it further:
+		if [[ "${LNm}" != *"com.apple."* ]] ; then {
+			# If a label is not-starting with "Label", then its 3rd-Party PLIST,
+			# otherwise its the column-header line that shows: "PID  Status  Label":
+			if [[ "${LNm}" != "Label" ]] ; then {
+				# echo "${LNm}";
+				# if the Label is one of below SAFE 3RD-PARTY ITEM, then we will skip stopping it:
+				if [[ "$LNm" == "com.avast.Antivirus" ]] || [[ "$LNm" == "com.avast.hub" ]] || \
+				 [[ "$LNm" == "com.avast.hub.xpc" ]] || [[ "$LNm" == "com.avast.hub.schedule" ]] || \
+				 [[ "$LNm" == "com.avast.uninstall" ]] || [[ "$LNm" == "com.avast.hns" ]] || \
+				 [[ "$LNm" == "com.avast.daemon" ]] || [[ "$LNm" == "com.avast.update" ]] || \
+				 [[ "$LNm" == "com.avast.submit" ]] || [[ "$LNm" == "com.avast.proxy" ]] || \
+				 [[ "$LNm" == "com.avast.service" ]] || [[ "$LNm" == "com.avast.fileshield" ]] || \
+				 [[ "$LNm" == "com.avast.securedns" ]] || [[ "$LNm" == "com.avast.api.xpc" ]] || \
+				 [[ "$LNm" == "com.avast.init" ]] ; then {
+				 	
+					echo "${sS} skipped disabling \"${LNm}\"";
+					
+				};
+				else {	# of "if [[ ... ]] ;"
+					# Make a record in a file, which will be disabled (temporarily):
+					# ...
+					
+					# Disable it (temporarily) now:
+					echo "${sS} attempting to disable \"${LNm}\"";
+					sudo /bin/launchctl stop "${LNm}";
+					
+					# check again, if successfully disabled, or not:
+					# ...
+					
+					# move the PLIST file into a backup folder:
+					# ...
+				};	# End of "else ..."
+				fi;	# END of "if [[ ... ]] ;"
+				
+				
+			};	# End of "if [[ "${LNm}" != "Label" ]] ; then ..."
+			fi;	# END of "if [[ "${LNm}" != "Label" ]] ;"
+		};	# End of "if [[ "${LNm}" != *"com.apple."* ]] ; then ..."
+		else {	# When item is from 2ND-PARTY (aka: Apple), then:
+			
+		};	# End of "else ..."
+		fi;	# END of "if [[ "${LNm}" != *"com.apple."* ]] ;"
+	};	# END of "while IFS= read -a Ln ; do"
+	done < <(sudo /bin/launchctl list) ;
+	
+	# NEXT, 2ND-STAGE : checking various folders directly & disabling 3rd-Party Auto Startup Items.
+	
+	# To find 3rd-Party Auto Startup Items, We are using 5 pairs of Source-&-Destination Directories,
+	#  as we need to loop/iterate same set of functions for each directory:
+	for L in 1 2 3 4 5 ; do {
 		# Loading Src & Dst folders, etc:
 		case "$L" in 
 		#   sD = Source/Src Dir:       dD = Destination/Dst Dir:
@@ -34,17 +92,17 @@ DBMyLL="${DBK}/My$LbLn";
 			if [ -d "$sD" ] ; then {
 				dsblCountr=0;
 				# Looping thru real PLIST files and symlink PLIST files that are inside the Dir/Folder selected in this loop:
-				find "$sD" -not -type d -print0 | while IFS= read -r -d $'\0' plf ; do {
-					# for f in "${sD}*.plist*" ; do { 
+				sudo /usr/bin/find "$sD" -not -type d -print0 | while IFS= read -r -d $'\0' plF ; do {
+					# for plF in "${sD}"*.plist* ; do {
 					# if selected plist file does-not exists then continuing to next loop:
 					#   (to overcome error of "For" loop, as it uses given code once, When no plist/match found)
-					[ -e "${sD}$f" ] || continue;
+					# [ -e "${sD}$plF" ] || continue;
 					# if selected plist file is not-starting with "com.apple..." or
 					#   is not in the white-listed items, then its 3rd-party item or risky-2nd-party item, 
 					#   so we will disable it (temporarily) & move it into backup:
-					if [ "$f" does-not begin with "com.apple..." ] ; then {  # wait for this line to be developed
+					if [[ "$plF" != "com.apple."* ]] ; then {
 						# getting plist-file's RunAtLoad property's value:
-						enbl=`sudo /usr/libexec/PlistBuddy -c 'print RunAtLoad' "${sD}$f"`;
+						enbl=`sudo /usr/libexec/PlistBuddy -c 'print RunAtLoad' "${sD}$plF"`;
 						# if RunAtLoad (key) has "true" (value), then its active, so we will process it further:						
 						if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ; then {
 							# as we found an active 3rd-party item, we will increase the counter value:
@@ -52,9 +110,9 @@ DBMyLL="${DBK}/My$LbLn";
 							# checking value of Counter for (plist)-items that are eligible for disable+move:
 							if [ "$dsblCountr" -gt 1 ] ; then {
 								# appending (3rd-party) plist filenames in a record file, as we are disabling+moving these:
-								echo "${sD}$f" >> "${dD}/disabled-plists.txt";
+								echo "${sD}$plF" >> "${dD}/disabled-plists.txt";
 							};
-							else {	# of if [ "$dsblCountr" -gt 1 ] ;
+							else {	# of "if [ "$dsblCountr" -gt 1 ] ;"
 								if [ "$dsblCountr" -eq 1 ]; then {
 									# creating Dst direcory/folder structure in ~/Desktop/Backup/" (when it does not exist)
 									[ -d "${dD}" ] || mkdir -p "${dD}";
@@ -63,48 +121,49 @@ DBMyLL="${DBK}/My$LbLn";
 									sudo ls -al "$sD" > ${dD}filesFoldersList.txt ;
 									# creating a file that will have list of those PLIST filenames which we have disabled/modified,
 									#  so that we can restore later.
-									echo "${sD}$f" > "${dD}/disabled-plists.txt";
+									echo "${sD}$plF" > "${dD}/disabled-plists.txt";
 								};
 								fi;
-							};
-							fi;	# End of if [ "$dsblCountr" -gt 1 ] ;
+							};	# End of "if [ "$dsblCountr" -gt 1 ] ; ... ; else ..."
+							fi;	# END of "if [ "$dsblCountr" -gt 1 ] ;"
 							
 							# disabling the STRATUP/plist/item, (before moving):
-							sudo /bin/launchctl unload "${sD}$f" ;
+							sudo /bin/launchctl unload "${sD}$plF" ;
 							# sudo /bin/launchctl stop <label>
-							# sudo /bin/launchctl load -w "${sD}$f" ;
+							# sudo /bin/launchctl load -w "${sD}$plF" ;
 							# sudo /bin/launchctl start <label> ;
 							# sudo launchctl kickstart -k <label>
 							
 							# again checking if it has disabled or not:
-							enbl=`sudo /usr/libexec/PlistBuddy -c 'print RunAtLoad' "${sD}$f"`;
+							enbl=`sudo /usr/libexec/PlistBuddy -c 'print RunAtLoad' "${sD}$plF"`;
 							# if launchctl could not disable it, then we will use PlistBuddy to manually disable it:
 							if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ; then {
 								# using PlistBuddy to disable plist file:
-								sudo /usr/libexec/PlistBuddy -c 'Set RunAtLoad fasle' "${sD}$f" ;
-								sudo /usr/libexec/PlistBuddy -c 'Save' "${sD}$f" ;
+								sudo /usr/libexec/PlistBuddy -c 'Set RunAtLoad fasle' "${sD}$plF" ;
+								sudo /usr/libexec/PlistBuddy -c 'Save' "${sD}$plF" ;
 							};
-							fi;	# End of if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ;
+							fi;	# END of "if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ;"
 							
 						};
-						fi;	# End of if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ;
+						fi;	# END of "if [ "`echo \"$enbl\" | /usr/bin/tr \"[A-Z]\" \"[a-z]\"`" == "true" ] ;"
 						
 						# moving the 3rd-party STARTUP/plist/item, into "~/Desktop/Backup/" folder:
-						sudo mv "${sD}${f}" "${dD}" ;
-					};
-					fi;
-				};
-				# done;	# End of for f in "${sD}*.plist*" ;
-				done;	# while IFS= read -r -d $'\0' f ;
+						sudo /bin/mv "${sD}$plF" "${dD}" ;
+					};	# End of "if [[ "$plF" !=  *"com.apple."* ]] ; then ..."
+					fi;	# END of "if [[ "$plF" !=  *"com.apple."* ]] ;"
+					
+				};	# End of "while IFS= read -r -d $'\0' plF ; do ..."
+				# done;	# END of "for plF in "${sD}*.plist*" ; do ..."
+				done;	# END of "find ... | while IFS= read -r -d $'\0' plF ;"
 				
-				unset dsblCountr;
+				unset dsblCountr plF enbl;
 			};
-			fi;	# End of if [ -d "$sD" ] ;
+			fi;	# End of "if [ -d "$sD" ] ;"
 			
 			
 		unset sD dD;
 	};
-	done;	# End of for L ... ;
+	done;	# End of "for L ... ;"
 
 dv=`$dt`;
 # dv2=`$dt`;
@@ -114,5 +173,6 @@ dv=`$dt`;
 # /bin/launchctl list > "~/${DBK}/${dv2}_launchctl-list.txt";
 /bin/launchctl list > "~/${DBK}/${dv}_launchctl-list_end.txt";
 
-unset dt dv dv2 LL DBK DBMLL LbLn;
-	
+unset LNm Ln;
+unset dt dv LL DBK LbLn;
+# unset dv2 DBMacLL DBMyLL;
