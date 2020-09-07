@@ -5,16 +5,18 @@ Disable (untrusted or allmost all) 3rd-party and other (risky 2nd-party, etc) AU
 <br /><br />
 USAGE:  
   
-DOWNLOAD `"disable-3rd-party-startup-in-mac.sh"` script file (via github "raw" mode) in your Mac/computer's "Desktop" or "Downloads" folder,  
+DOWNLOAD `"disable-3rd-party-startup-in-mac.sh"`<sup><a href="https://github.com/atErik/Disable-MacOS-3rd-Party-Startup/raw/master/disable-3rd-party-startup-in-mac.sh">1</a></sup> script file (via github "raw" mode) in your Mac/computer's "Desktop" or "Downloads" folder,  
 Or, Copy-Paste code into a script file.  
 <br />
 Make the script file EXECUTABLE:  
-run either this cmd: `chmod +x ~/Desktop/disable-3rd-party-startup-in-mac.sh`  
-(or this cmd: `chmod +x ~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
+run either this cmd:  
+&#160;&#160;`chmod +x ~/Desktop/disable-3rd-party-startup-in-mac.sh`  
+(or this cmd: &#160;&#160;`chmod +x ~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
 <br />
 RUN it:  
-run it from "Terminal": `~/Desktop/disable-3rd-party-startup-in-mac.sh`  
-&#160;&#160;(or: `~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
+run it from "Terminal":  
+&#160;&#160;`~/Desktop/disable-3rd-party-startup-in-mac.sh`  
+(or: &#160;&#160;`~/Downloads/disable-3rd-party-startup-in-mac.sh`)  
 or, double-click on the `"disable-3rd-party-startup-in-mac.sh"` file, in Mac "Finder".  
 <br />
 
