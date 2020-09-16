@@ -5,7 +5,7 @@ Disable (untrusted or allmost all) 3rd-party and other (risky 2nd-party, etc) AU
 <br /><br />
 USAGE:  
   
-DOWNLOAD `"disable-3rd-party-startup-in-mac.sh"`<sup><a href="https://github.com/atErik/Disable-MacOS-3rd-Party-Startup/raw/master/disable-3rd-party-startup-in-mac.sh">1</a></sup> script file (via github "raw" mode) in your Mac/computer's "Desktop" or "Downloads" folder,  
+DOWNLOAD the "<a href="https://github.com/atErik/Disable-MacOS-3rd-Party-Startup/raw/master/disable-3rd-party-startup-in-mac.sh">disable-3rd-party-startup-in-mac.sh</a>" script file (via github "raw" mode) in your Mac/computer's "Desktop" or "Downloads" folder,  
 Or, Copy-Paste code into a script file.  
 <br />
 Make the script file EXECUTABLE:  
